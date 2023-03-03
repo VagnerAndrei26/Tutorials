@@ -213,10 +213,10 @@ contract ERC20 is IERC20, IERC20Metadata {
         _approve(
             msg.sender,
             spender,
-            _allowances[msg.sender][spender] - addedValue
-        );
+            _allowances[msg.sender][spender] + addedValue
+        ); 
         return true;
-    }
+    } //In the increaseAllowance function the allowances was deducted instead of added
 
     /**
      * @dev Atomically decreases the allowance granted to `spender` by the caller.
