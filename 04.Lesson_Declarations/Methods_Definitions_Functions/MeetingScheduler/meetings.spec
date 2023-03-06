@@ -1,3 +1,16 @@
+methods {
+	getStateById(uint256) 
+	getStartTimeById(uint256) returns (uint256) 
+	getEndTimeById(uint256) returns (uint256) 
+	getnumOfParticipants(uint256) returns (uint256) 
+	getOrganizer(uint256) returns (address) envfree
+	scheduleMeeting(uint256,uint256,uint256) 
+	startMeeting(uint256)
+	cancelMeeting(uint256)
+	endMeeting(uint256)
+	joinMeeting(uint256)
+}
+
 /*  Representing enums
 
     enums are supported by the Certora Verification Language (CVL), 
@@ -14,7 +27,11 @@
     We will learn more about supported data structures in future lessons.
     For now, follow the above explanation to pass this exercise.
  */
-
+definition meetingUninitialized(env e, uint256 meetingId) returns bool = getStartTimeById(e, meetingId) == 0 && getEndTimeById(e, meetingId) == 0 &&  getnumOfParticipants(e, meetingId) == 0;
+definition meetingPending(env e ,uint256 meetingId) returns bool = getStartTimeById(e, meetingId) > 0 && getEndTimeById(e, meetingId) > getStartTimeById(e, meetingId);
+definition meetingStarted(env e, uint256 meetingId) returns bool = getStateById(e, meetingId) == 2 && getStartTimeById(e, meetingId) >= e.block.timestamp;
+definition meetingEnded(env e, uint256 meetingId) returns bool = getStateById(e, meetingId) == 3 && getEndTimeById(e, meetingId) <= e.block.timestamp;
+definition meetingCancelled(env e, uint256 meetingId) returns bool = getStateById(e, meetingId) == 4;
 
 // Checks that when a meeting is created, the planned end time is greater than the start time
 rule startBeforeEnd(method f, uint256 meetingId, uint256 startTime, uint256 endTime) {
@@ -80,7 +97,7 @@ rule monotonousIncreasingNumOfParticipants(method f, uint256 meetingId) {
     require getStateById(e, meetingId) == 0 => getnumOfParticipants(e, meetingId) == 0;
 	uint256 numOfParticipantsBefore = getnumOfParticipants(e, meetingId);
 	f(e, args);
-    uint256 numOfParticipantsAfter = getnumOfParticipants(meetingId);
+    uint256 numOfParticipantsAfter = getnumOfParticipants(e, meetingId);
 
 	assert numOfParticipantsBefore <= numOfParticipantsAfter, "the number of participants decreased as a result of a function call";
 }

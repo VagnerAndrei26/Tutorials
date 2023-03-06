@@ -1,7 +1,24 @@
+methods {
+	name() returns (string) envfree
+	symbol() returns (string) envfree
+	decimals() returns (uint8) envfree
+	totalSupply() returns (uint256) envfree
+	balanceOf(address) returns (uint256) 
+	transfer(address,uint256) returns (bool)
+	allowance(address,address) returns (uint256)
+	approve(address,uint256) returns(bool)
+	transferFrom(address,address,uint256) returns(bool)
+	increaseAllowance(address,uint256) returns(bool)
+	decreaseAllowance(address,uint256) returns(bool)
+
+
+}
+
 
 // not really useful, couldnt find anything that should be turned into a function 
 function getAllowance(address owner, address spender) returns uint256 {
-	return allowance(owner, spender);
+	env e;
+	return allowance(e, owner, spender);
 }
 
 definition MAX_UINT256() returns uint256 = 0xffffffffffffffffffffffffffffffff;

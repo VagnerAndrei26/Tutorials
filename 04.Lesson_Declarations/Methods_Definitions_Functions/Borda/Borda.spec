@@ -1,3 +1,39 @@
+function getVoterAge (env e , address voter) returns uint8 {
+    uint8 age;
+    age,_,_,_,_= getFullVoterDetails(e, voter);
+    return age;
+}
+
+function getVoterRegistered (env e , address voter) returns bool {
+    bool registered;
+    _,registered,_,_,_= getFullVoterDetails(e, voter);
+    return registered;
+}
+
+function getVoterVoted (env e , address voter) returns bool {
+    bool voted;
+    _,_,voted,_,_= getFullVoterDetails(e, voter);
+    return voted;
+}
+
+function getVoterVoteAttempts (env e , address voter) returns uint256 {
+    uint256 vote_attempts;
+    _,_,_,vote_attempts,_= getFullVoterDetails(e, voter);
+    return vote_attempts;
+}
+
+function getVoterBlocked (env e , address voter) returns bool {
+    bool blocked;
+    _,_,_,_,blocked= getFullVoterDetails(e, voter);
+    return blocked;
+}
+
+definition unRegisteredVoter(env e, address voter) returns bool = getVoterRegistered(e, voter) == false;
+definition registeredYetVotedVoter(env e, address voter) returns bool = getVoterRegistered(e, voter) == true && getVoterVoted(e, voter) == false;
+definition legitRegisteredVotedVoter(env e, address voter) returns bool = getVoterRegistered(e, voter) == true && getVoterVoted(e, voter) == true && getVoterBlocked(e, voter) == false;
+definition blockedVoter(env e, address voter) returns bool = getVoterRegistered(e, voter) == true && getVoterVoted(e, voter) == true && getVoterBlocked(e, voter) == true;
+
+
 // Checks that a voter's "registered" mark is changed correctly - 
 // If it's false after a function call, it was false before
 // If it's true after a function call, it either started as true or changed from false to true via registerVoter()
@@ -36,12 +72,11 @@ rule correctPointsIncreaseToContenders(address first, address second, address th
 // Checks that a blocked voter cannot get unlisted
 rule onceBlockedNotOut(method f, address voter){
     env e; calldataarg args;
-    uint256 age; bool registeredBefore; bool voted; uint256 vote_attempts; bool blocked_before;
-    age, registeredBefore, voted, vote_attempts, blocked_before = getFullVoterDetails(e, voter);
+    bool registeredBefore = getVoterRegistered(e, voter);
+    bool blocked_before = getVoterBlocked(e, voter);
     require blocked_before => registeredBefore;
     f(e, args);
-    bool registeredAfter; bool blocked_after;
-    age, registeredAfter, voted, vote_attempts, blocked_after = getFullVoterDetails(e, voter);
+    bool blocked_after = getVoterBlocked(e, voter);
     
     assert blocked_before => blocked_after, "the specified user got out of the blocked users' list";
 }

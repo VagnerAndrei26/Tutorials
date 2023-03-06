@@ -1,2 +1,3 @@
- certoraRun AuctionFixed.sol:System --verify System:Auction.spec --solc solc5.12
+ certoraRun AuctionFixed.sol:System --verify System:Auction.spec \
+--send_only 
 

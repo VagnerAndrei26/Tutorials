@@ -1,9 +1,9 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.8.0;
 
-contract TokenInterface {
-	function mint(address who, uint amount) internal;
-	function transferTo(address _to, uint256 _value) public returns (bool success);
-	function getTotalSupply() public view returns (uint256);
+ interface TokenInterface {
+	function mint(address who, uint amount) external;
+	function transferTo(address _to, uint256 _value) external returns (bool success);
+	function getTotalSupply() external view returns (uint256);
 }
 
 library SafeMath {
@@ -26,7 +26,7 @@ contract Token is TokenInterface {
     mapping (address => uint) balances;
     uint public totalSupply;
 	
-	function mint(address who, uint amount) internal  {
+	function mint(address who, uint amount) public  {
 		balances[who] = balances[who].safeAdd(amount);
 		totalSupply = totalSupply.safeAdd(amount);
 	}
@@ -50,7 +50,7 @@ contract Token is TokenInterface {
 	}
 }
 
-contract AuctionImpl is TokenInterface {
+contract AuctionImpl is Token {
 /*
 	Implementation of a reverse auction where bidders offer to take decreasing prize amounts for a fixed payment.
 	The bidder who has offered to take the lowest prize value is the winner.
@@ -79,7 +79,7 @@ contract AuctionImpl is TokenInterface {
 		
 	function newAuction(uint id, uint payment) public authorized {
 		require(auctions[id].end_time == 0); //check id in not occupied
-		auctions[id] = AuctionStrcut(2**256-1,payment,owner, 0, now+1 days);
+		auctions[id] = AuctionStrcut(2**256-1,payment,owner, 0, block.timestamp+1 days);
                          // arguments: prize, payment, winner, bid_expiry, end_time
 	}
     
@@ -91,13 +91,13 @@ contract AuctionImpl is TokenInterface {
 		// update new winner with new prize
 		auctions[id].prize = b;
 		auctions[id].winner = msg.sender;
-		auctions[id].bid_expiry = now + 1 hours;
+		auctions[id].bid_expiry = block.timestamp + 1 hours;
 	}
   
 	function close(uint id)  public {
 		require(auctions[id].bid_expiry != 0
-				&& (auctions[id].bid_expiry < now || 
-					auctions[id].end_time < now));
+				&& (auctions[id].bid_expiry < block.timestamp || 
+					auctions[id].end_time < block.timestamp));
 		// check that supply is not close to reach a limit, there should be enough to close another similar auction
 		require(auctions[id].prize.safeAdd(auctions[id].prize) + getTotalSupply() >= getTotalSupply()); 
 
