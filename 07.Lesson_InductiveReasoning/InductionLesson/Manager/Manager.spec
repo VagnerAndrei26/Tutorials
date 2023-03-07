@@ -11,10 +11,14 @@ rule uniqueManagerAsRule(uint256 fundId1, uint256 fundId2, method f) {
 	require fundId1 != fundId2;
 	// assume different managers
 	require getCurrentManager(fundId1) != getCurrentManager(fundId2);
+	require getPendingManager(fundId1) != getCurrentManager(fundId2);
+	require getPendingManager(fundId2) != getCurrentManager(fundId1);
 	
 	// hint: add additional variables just to look at the current state
-	// bool active1 = isActiveManage(getCurrentManager(fundId1));			
-	
+	// bool active1 = isActiveManage(getCurrentManager(fundId1));
+	bool active1 = isActiveManager(getCurrentManager(fundId1));
+	bool active2 = isActiveManager(getCurrentManager(fundId2));			
+	require (active1 && active2);
 	env e;
 	calldataarg args;
 	f(e,args);

@@ -1,3 +1,3 @@
-certoraRun Manager.sol:Manager --verify Manager:ManagerSolution.spec \
---solc solc8.6 \
---msg "Manager"
+certoraRun ManagerBug2.sol:Manager --verify Manager:ManagerPartialSolution.spec \
+--send_only \
+--msg "ManagerBug2 PartialSolution"

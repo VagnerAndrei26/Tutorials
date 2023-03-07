@@ -1,5 +1,5 @@
 
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.0;
 
 contract TicketDepot {  
 
@@ -16,7 +16,7 @@ contract TicketDepot {
 		uint256 deadline;
 	} 
 
-	uint16 numEvents;
+	uint16 public numEvents;
 	address public owner;  
 	uint64 public transactionFee;  
 	mapping(uint16 => Event) public eventsMap;
@@ -87,5 +87,9 @@ contract TicketDepot {
 			eventsMap[_eventID].attendees[_ticketID] = _newAttendee;  
 			delete offerings[offerID];  
 	} 
+
+	function ticketsRemaining(uint16 _eventID) public view returns(uint16) {
+		return eventsMap[_eventID].ticketsRemaining;
+	}
 
 } 

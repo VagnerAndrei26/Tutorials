@@ -1,2 +1,4 @@
 certoraRun TicketDepot.sol --verify TicketDepot:sanity.spec \
---solc solc6.12
+--optimistic_loop \
+--send_only \
+--msg "$1"
