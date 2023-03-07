@@ -1,5 +1,4 @@
-certoraRun ReserveListFixed.sol:ReserveList --verify ReserveList:Reserve.spec \
---solc solc8.7 \
+certoraRun ReserveListFixed.sol:ReserveList --verify ReserveList:ReserveList.spec \
 --optimistic_loop \
 --loop_iter 3 \
 --msg "correlated lists broken"

@@ -32,16 +32,43 @@ methods {
 
 
 
-// check highestBidder correlation with highestBid from bids mapping
-invariant highestBidVSBids() 
-    bids( highestBidder()) == highestBid()
+/***********************/
+/***** Invariants *****/
+/***********************/
 
+
+// If nobody made a bid, then all bids should be 0
+invariant zeroHighestBid(address other)
+    (highestBid() == 0 || highestBidder() == 0) => bids(other) == 0 
+    {
+        preserved bidFor(address bidder, uint amount) with (env e) {
+            require bidder != 0; 
+        }
+
+        preserved bid(uint amount) with (env e) {
+            require e.msg.sender != 0; 
+        }
+
+    }
+
+
+// check highestBidder correlation with highestBid from bids mapping
+invariant highestBidVSBids(address a) 
+    (highestBidder() == a  => bids(a) == highestBid()) ||
+    (highestBidder() == 0) 
+
+
+// If a user isn't the highestBidder, they should have less bids than highestBid
+invariant integrityOfHighestBidStep3(address other) 
+    (highestBid() > 0 && other != highestBidder()) => 
+                bids(other) < highestBid() 
+    {
+        preserved {
+            requireInvariant highestBidVSBids(other);
+            requireInvariant zeroHighestBid(other);
+        }
+    }
 
 // Nobody can have more bids than highestBid
-invariant integrityOfHighestBid(address any) 
+invariant integrityOfHighestBidWeak(address any) 
     bids(any) <= highestBid() 
-
-
-// others have less than highestBid
-invariant integrityOfHighestBid(address other) 
-    other != highestBidder() =>  bids(other) < highestBid() 

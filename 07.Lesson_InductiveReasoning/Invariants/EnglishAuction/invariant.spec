@@ -33,7 +33,7 @@ methods {
 
 
 // check highestBidder correlation with highestBid from bids mapping
-invariant highestBidVSBids() 
+invariant highestBidVSBids(env e, address a, uint256 b)
     bids( highestBidder()) == highestBid()
 
 
