@@ -1,8 +1,7 @@
-certoraRun ArrayUniqueBug.sol \
---verify ArrayUniqueBug:ArrayUniqueBug.spec \
---solc solc8.6 \
+certoraRun ArrayUniqueSolution.sol:ArrayBugSolution \
+--verify ArrayBugSolution:ArrayUniqueBug.spec \
 --send_only \
 --optimistic_loop \
 --loop_iter 4 \
 --rule_sanity \
---msg "ArrayUniqueBug.sol with sanity check"
+--msg "ArraySolutionBug.sol with sanity check"
